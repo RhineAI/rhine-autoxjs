@@ -8,7 +8,8 @@ import java.util.zip.ZipInputStream
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.jakewharton.butterknife")
+    // 移除过时的butterknife插件
+    // id("com.jakewharton.butterknife")
     id("kotlin-kapt")
 }
 
@@ -60,8 +61,11 @@ android {
         disable.addAll(listOf("MissingTranslation", "ExtraTranslation"))
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
     composeOptions {
         kotlinCompilerExtensionVersion = compose_version
