@@ -106,7 +106,7 @@ class SplashActivity : ComponentActivity() {
                         .align(Alignment.CenterHorizontally)
                 )
                 Text(
-                    text = "Modified by Ozobi",
+                    text = "Made by RHINE.AI",
                     color = Color(0xf69C7CFF),
                     fontSize = 12.sp,
                     modifier = Modifier

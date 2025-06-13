@@ -810,7 +810,7 @@ private fun VoiceAssistantSwitch() {
             // 打开数字助理设置页面
             val intent = Intent(Settings.ACTION_VOICE_INPUT_SETTINGS)
             context.startActivity(intent)
-            Toast.makeText(context, "请选择 Autox.js v6_ozobi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "请选择 Android Intelligence", Toast.LENGTH_SHORT).show()
         } else {
             // 关闭数字助理服务?
             val intent = Intent(Settings.ACTION_VOICE_INPUT_SETTINGS)

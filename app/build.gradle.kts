@@ -145,7 +145,7 @@ android {
             versionName = versions.devVersionName
             buildConfigField("String", "CHANNEL", "\"v6\"")
 //            buildConfigField("String", "APPID", "\"?id=23\"")
-            manifestPlaceholders.putAll(mapOf("appName" to "Autox.js v6_ozobi"))
+            manifestPlaceholders.putAll(mapOf("appName" to "Android Intelligence"))
         }
     }
 
@@ -381,7 +381,7 @@ tasks.named("clean").configure {
 }
 //离线文档下载安装
 val docsDir = File(projectDir, "src/main/assets/docs")
-tasks.named("preBuild").dependsOn("installationDocumentation")
+//tasks.named("preBuild").dependsOn("installationDocumentation")
 tasks.register("installationDocumentation") {
     // Modified by ozobi - 2025/01/10 > 添加v2本、在线文档  原先的库没了，换成自己上传的文档地址
     val docV1Uri = "https://github.com/ozobiozobi/AutoxjsDocs/raw/refs/heads/main/v1_v2.zip"
