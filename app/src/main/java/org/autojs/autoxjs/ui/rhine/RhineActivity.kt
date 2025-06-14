@@ -44,6 +44,7 @@ import org.autojs.autoxjs.network.MessengerServiceConnection
 import org.autojs.autoxjs.timing.TimedTaskScheduler
 import org.autojs.autoxjs.ui.compose.theme.AutoXJsTheme
 import org.autojs.autoxjs.ui.floating.FloatyWindowManger
+import org.autojs.autoxjs.ui.main.MainActivity
 import org.autojs.autoxjs.ui.main.scripts.ScriptListFragment
 import org.autojs.autoxjs.ui.main.task.TaskManagerFragmentKt
 import org.autojs.autoxjs.ui.main.web.EditorAppManager
@@ -125,111 +126,143 @@ class RhineActivity : FragmentActivity() {
             ).show()
         } else super.onBackPressed()
     }
-}
 
-@Preview
-@Composable
-fun MainPage() {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    @Preview
+    @Composable
+    fun MainPage() {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    var inputText by remember { mutableStateOf("") }
+        var inputText by remember { mutableStateOf("") }
+        
+        val buttonBackgroundColor = Color(0xFFDDDDDD)
+        val buttonTextColor = Color(0xFF111111)
 
-    SetSystemUI(drawerState)
+        SetSystemUI(drawerState)
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Text(
-                text = "Android Intelligence",
-                style = MaterialTheme.typography.h4,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 128.dp)
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 64.dp)
-                    .height(120.dp),
-            ) {
-                TextField(
-                    value = inputText,
-                    onValueChange = { inputText = it },
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    placeholder = {
-                        Text("Let me help you do something...")
-                    },
-                    shape = RoundedCornerShape(24.dp),
-                    maxLines = 5,
-                    textStyle = TextStyle(fontSize = 16.sp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color(0xFFF0F0F0),
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-
-                Button(
-                    onClick = {
-                        if (inputText.isNotBlank()) {
-                            println("Input text: $inputText")
-                        }
-                    },
-                    modifier = Modifier
-                        .absoluteOffset(x = (-12).dp, y = (-12).dp)
-                        .align(Alignment.BottomEnd),
-                    shape = RoundedCornerShape(12.dp),
-                    enabled = inputText.isNotBlank()
-                ) {
-                    Text(
-                        text = "Send",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
+        Scaffold(
+            modifier = Modifier.fillMaxSize()
+        ) { paddingValues ->
             Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(bottom = 32.dp)
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(48.dp),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                ) {
-                    Button(
-                        onClick = {},
-                    ) {
-                        Text("Home")
-                    }
-
-                    Button(
-                        onClick = {},
-                    ) {
-                        Text("MCP")
-                    }
-
-                    Button(
-                        onClick = {},
-                    ) {
-                        Text("Setting")
-                    }
-                }
 
                 Text(
-                    text = "RHINE.AI",
+                    text = "Android Intelligence",
+                    style = MaterialTheme.typography.h4,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 128.dp)
                 )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 64.dp)
+                        .height(120.dp),
+                ) {
+                    TextField(
+                        value = inputText,
+                        onValueChange = { inputText = it },
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        placeholder = {
+                            Text("Let me help you do something...")
+                        },
+                        shape = RoundedCornerShape(24.dp),
+                        maxLines = 5,
+                        textStyle = TextStyle(fontSize = 16.sp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color(0xFFF0F0F0),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            cursorColor = Color.Black
+                        )
+                    )
+
+                    Button(
+                        onClick = {
+                            if (inputText.isNotBlank()) {
+                                println("Input text: $inputText")
+                            }
+                        },
+                        modifier = Modifier
+                            .absoluteOffset(x = (-12).dp, y = (-12).dp)
+                            .align(Alignment.BottomEnd),
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = inputText.isNotBlank(),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (inputText.isNotBlank()) Color.Black else Color.Gray,
+                            contentColor = Color.White,
+                            disabledBackgroundColor = Color.Gray,
+                            disabledContentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Send",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(bottom = 32.dp)
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(48.dp),
+                        modifier = Modifier.padding(bottom = 20.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                val intent = Intent(this@RhineActivity, MainActivity::class.java)
+                                startActivity(intent)
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = buttonBackgroundColor,
+                                contentColor = buttonTextColor
+                            ),
+                            contentPadding = PaddingValues(16.dp, 12.dp),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text("Home")
+                        }
+
+                        Button(
+                            onClick = {},
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = buttonBackgroundColor,
+                                contentColor = buttonTextColor
+                            ),
+                            contentPadding = PaddingValues(16.dp, 12.dp),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text("MCP")
+                        }
+
+                        Button(
+                            onClick = {},
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = buttonBackgroundColor,
+                                contentColor = buttonTextColor
+                            ),
+                            contentPadding = PaddingValues(16.dp, 12.dp),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text("Setting")
+                        }
+                    }
+
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = "RHINE.AI",
+                    )
+                }
             }
         }
     }

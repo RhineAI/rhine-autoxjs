@@ -191,16 +191,7 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun back() {
-        val currentTime = System.currentTimeMillis()
-        val interval = currentTime - lastBackPressedTime
-        if (interval > 2000) {
-            lastBackPressedTime = currentTime
-            Toast.makeText(
-                this,
-                getString(R.string.text_press_again_to_exit),
-                Toast.LENGTH_SHORT
-            ).show()
-        } else super.onBackPressed()
+        super.onBackPressed()
     }
 }
 
