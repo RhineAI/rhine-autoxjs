@@ -39,6 +39,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.autojs.autoxjs.R
 import org.autojs.autoxjs.ui.main.MainActivity
+import org.autojs.autoxjs.ui.rhine.RhineActivity
 
 /**
  * Created by Stardust on 2017/7/7.
@@ -141,7 +142,8 @@ class SplashActivity : ComponentActivity() {
             return
         }
         mAlreadyEnterNextActivity = true
-        startActivity(Intent(this, MainActivity::class.java))
+//        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, RhineActivity::class.java))
         finish()
     }
 
