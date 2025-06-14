@@ -3,6 +3,7 @@ package org.autojs.autoxjs.model.script
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.Nullable
 import com.stardust.app.GlobalAppContext

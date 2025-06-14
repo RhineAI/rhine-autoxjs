@@ -1,11 +1,13 @@
 package org.autojs.autoxjs.ui.main
 
+import DebugServer
 import android.Manifest
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -19,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -69,6 +72,8 @@ class MainActivity : FragmentActivity() {
         fun getIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 
+    private val TAG = "Android Intelligence - MainActivity"
+
     private val scriptListFragment by lazy { ScriptListFragment() }
     private val taskManagerFragment by lazy { TaskManagerFragmentKt() }
     private val webViewFragment by lazy { EditorAppManager() }
@@ -77,6 +82,8 @@ class MainActivity : FragmentActivity() {
     private val viewPager: ViewPager2 by lazy { ViewPager2(this) }
     private var scope: CoroutineScope? = null
     private lateinit var serviceConnection:MessengerServiceConnection
+
+    private var server: DebugServer? = null
 
     @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,6 +116,16 @@ class MainActivity : FragmentActivity() {
             .edit()
             .putBoolean(applicationContext.getString(R.string.ozobi_key_docs_service), isDocsServiceRunning)
             .apply()
+
+        server = DebugServer(8080, this)
+        try {
+            server!!.start()
+            Log.d(TAG, "Server started on port 8080")
+            println("Debug server started on http://localhost:8080")
+            println("Test URL: http://localhost:8080/debug/execute?code=hello")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to start server", e)
+        }
 
         setContent {
             scope = rememberCoroutineScope()
@@ -149,6 +166,10 @@ class MainActivity : FragmentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        server?.stop()
+        Log.d(TAG, "Server stopped")
+
         unbindService(serviceConnection)
     }
 

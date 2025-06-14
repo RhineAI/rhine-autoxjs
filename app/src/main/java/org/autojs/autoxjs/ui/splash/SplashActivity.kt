@@ -107,7 +107,7 @@ class SplashActivity : ComponentActivity() {
                 )
                 Text(
                     text = "Made by RHINE.AI",
-                    color = Color(0xf69C7CFF),
+                    color = Color(0xF68D8D8D),
                     fontSize = 12.sp,
                     modifier = Modifier
                         .padding(0.dp,0.dp,0.dp,10.dp)

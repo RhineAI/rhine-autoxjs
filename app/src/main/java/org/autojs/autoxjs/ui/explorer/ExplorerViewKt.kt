@@ -536,6 +536,8 @@ open class ExplorerViewKt : ThemeColorSwipeRefreshLayout, OnRefreshListener,
 
         @OnClick(R.id.run)
         fun run() {
+            val TAG = "Android Intelligence"
+            Log.i(TAG, "run: " + explorerItem!!.path)
             run(ScriptFile(explorerItem!!.path))
             notifyOperated()
         }
