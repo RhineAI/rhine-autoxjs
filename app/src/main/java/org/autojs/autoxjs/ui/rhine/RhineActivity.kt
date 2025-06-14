@@ -15,7 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,7 +91,7 @@ class RhineActivity : FragmentActivity() {
         setContent {
             scope = rememberCoroutineScope()
             AutoXJsTheme {
-                Surface(color = MaterialTheme.colorScheme.background) {
+                Surface(color = MaterialTheme.colors.background) {
                     MainPage(activity = this)
                 }
             }
@@ -151,7 +151,7 @@ fun MainPage(activity: FragmentActivity) {
             // 标题
             Text(
                 text = "Android Intelligence",
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.h2,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 32.dp)
             )
@@ -172,10 +172,6 @@ fun MainPage(activity: FragmentActivity) {
                         Text("请输入内容...")
                     },
                     shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                    ),
                     maxLines = 5,
                     textStyle = TextStyle(fontSize = 16.sp)
                 )
@@ -204,7 +200,7 @@ fun MainPage(activity: FragmentActivity) {
                     )
                 }
             }
-            
+
             // 底部区域
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -216,36 +212,25 @@ fun MainPage(activity: FragmentActivity) {
                 ) {
                     Button(
                         onClick = { /* Home 按钮点击事件 */ },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        )
                     ) {
                         Text("Home")
                     }
-                    
+
                     Button(
                         onClick = { /* MCP 按钮点击事件 */ },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        )
                     ) {
                         Text("MCP")
                     }
-                    
+
                     Button(
                         onClick = { /* Setting 按钮点击事件 */ },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondary
-                        )
                     ) {
                         Text("Setting")
                     }
                 }
-                
+
                 Text(
                     text = "RHINE.AI",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
         }
