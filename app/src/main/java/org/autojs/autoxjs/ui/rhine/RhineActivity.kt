@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -90,10 +91,9 @@ class RhineActivity : FragmentActivity() {
 
         setContent {
             scope = rememberCoroutineScope()
-            AutoXJsTheme {
-                Surface(color = MaterialTheme.colors.background) {
-                    MainPage(activity = this)
-                }
+
+            Surface(color = MaterialTheme.colors.background) {
+                MainPage()
             }
         }
     }
@@ -127,11 +127,10 @@ class RhineActivity : FragmentActivity() {
     }
 }
 
+@Preview
 @Composable
-fun MainPage(activity: FragmentActivity) {
-    val context = LocalContext.current
+fun MainPage() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
 
     var inputText by remember { mutableStateOf("") }
 
@@ -144,64 +143,63 @@ fun MainPage(activity: FragmentActivity) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            // 标题
+
             Text(
                 text = "Android Intelligence",
-                style = MaterialTheme.typography.h2,
+                style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 32.dp)
+                modifier = Modifier.padding(top = 128.dp)
             )
-            
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.weight(1f)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 64.dp)
+                    .height(120.dp),
             ) {
-                // 大输入框
-                OutlinedTextField(
+                TextField(
                     value = inputText,
                     onValueChange = { inputText = it },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
+                        .fillMaxSize(),
                     placeholder = {
-                        Text("请输入内容...")
+                        Text("Let me help you do something...")
                     },
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(24.dp),
                     maxLines = 5,
-                    textStyle = TextStyle(fontSize = 16.sp)
+                    textStyle = TextStyle(fontSize = 16.sp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color(0xFFF0F0F0),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // 按钮
                 Button(
                     onClick = {
-                        // 按钮点击事件处理
                         if (inputText.isNotBlank()) {
-                            println("Input text: $inputText") // 输出日志
-                            // 在这里添加你的业务逻辑
+                            println("Input text: $inputText")
                         }
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
+                        .absoluteOffset(x = (-12).dp, y = (-12).dp)
+                        .align(Alignment.BottomEnd),
                     shape = RoundedCornerShape(12.dp),
                     enabled = inputText.isNotBlank()
                 ) {
                     Text(
-                        text = "确认",
-                        fontSize = 16.sp,
+                        text = "Send",
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
             }
 
-            // 底部区域
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -211,19 +209,19 @@ fun MainPage(activity: FragmentActivity) {
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
                     Button(
-                        onClick = { /* Home 按钮点击事件 */ },
+                        onClick = {},
                     ) {
                         Text("Home")
                     }
 
                     Button(
-                        onClick = { /* MCP 按钮点击事件 */ },
+                        onClick = {},
                     ) {
                         Text("MCP")
                     }
 
                     Button(
-                        onClick = { /* Setting 按钮点击事件 */ },
+                        onClick = {},
                     ) {
                         Text("Setting")
                     }
