@@ -32,22 +32,34 @@ class DebugServer(port: Int, val context: Context? = null): NanoHTTPD("0.0.0.0",
             val code = params["code"]
 
             return if (code != null) {
-                Log.i(TAG, "Executing code: $code")
+                Log.i(TAG, "Executing JavaScript code")
 
-                runCodeString(code)
+                // 使用协程等待执行完成并获取结果
+                val result = runBlocking {
+                    runCodeString(code)
+                }
 
-                newFixedLengthResponse(Response.Status.OK, "text/plain", "Success")
+                // 构建响应内容
+                val responseText = buildString {
+                    result.second.forEach { log ->
+                        appendLine(log)
+                    }
+                }
+
+                newFixedLengthResponse(Response.Status.OK, "text/plain", responseText)
             } else {
+                Log.w(TAG, "Missing 'code' parameter in request")
                 newFixedLengthResponse(Response.Status.BAD_REQUEST, "text/plain", "Missing 'code' parameter")
             }
         }
 
+        Log.w(TAG, "Endpoint not found: $uri")
         return newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found")
     }
 }
 
 @SuppressLint("SdCardPath")
-fun runCodeString(code: String) {
+suspend fun runCodeString(code: String): Pair<Any?, List<String>> {
     val TAG = "Android Intelligence - run"
 
     // 获取当前时间戳，精确到秒
@@ -63,38 +75,37 @@ fun runCodeString(code: String) {
         // 创建目录（如果不存在）
         val dir = File(dirPath)
         if (!dir.exists()) {
-            dir.mkdirs()
+            val created = dir.mkdirs()
+            Log.d(TAG, "Created debug directory: $dirPath, success: $created")
         }
 
         // 写入文件
         val file = File(filePath)
         file.writeText(code)
 
-        Log.i(TAG, "Code saved successfully to: $filePath")
-        Log.i(TAG, "Running script... B")
+        Log.i(TAG, "Script saved successfully to: $filePath")
+        Log.i(TAG, "Starting script execution...")
 
-        // 使用协程执行脚本并等待结果
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val scriptSource = ScriptFile(filePath).toSource()
-                if (scriptSource == null) {
-                    Log.e(TAG, "未找到可执行脚本: ${filePath}")
-                    return@launch
-                }
-                val (result, logs) = executeScriptAndWait(scriptSource)
-                
-                Log.i(TAG, "=== 脚本执行完成 ===")
-                Log.i(TAG, "执行结果: $result")
-                Log.i(TAG, "=== 执行日志 ===")
-                logs.forEach { log ->
-                    Log.i(TAG, log)
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "脚本执行失败: ${e.message}", e)
-            }
+        // 执行脚本并等待结果
+        val scriptSource = ScriptFile(filePath).toSource()
+        if (scriptSource == null) {
+            Log.e(TAG, "Failed to create script source from file: $filePath")
+            return Pair("Error: Script source not found", listOf("ERROR: Failed to create script source from file: $filePath"))
+        }
+        
+        return try {
+            val (result, logs) = executeScriptAndWait(scriptSource)
+            
+            Log.i(TAG, "Script execution completed successfully")
+            
+            Pair(result, logs)
+        } catch (e: Exception) {
+            Log.e(TAG, "Script execution failed: ${e.message}", e)
+            Pair("Error: ${e.message}", listOf("ERROR: Script execution failed: ${e.message}"))
         }
     } catch (e: Exception) {
-        Log.e(TAG, "Error saving file: ${e.message}", e)
+        Log.e(TAG, "Failed to save script file: ${e.message}", e)
+        return Pair("Error: ${e.message}", listOf("ERROR: Failed to save script file: ${e.message}"))
     }
 }
 
@@ -108,10 +119,9 @@ suspend fun executeScriptAndWait(scriptSource: ScriptSource): Pair<Any?, List<St
         
         val listener = object : SimpleScriptExecutionListener() {
             override fun onSuccess(execution: ScriptExecution, result: Any?) {
-                // 等待100ms再收集日志，确保所有延迟日志都被收集
                 CoroutineScope(Dispatchers.IO).launch {
-                    delay(100)
-                    
+                    delay(34)
+
                     // 收集日志
                     val allLogs = globalConsole.allLogs
                     if (allLogs.size > initialLogCount) {
@@ -124,10 +134,9 @@ suspend fun executeScriptAndWait(scriptSource: ScriptSource): Pair<Any?, List<St
             }
             
             override fun onException(execution: ScriptExecution, e: Throwable) {
-                // 等待100ms再收集日志，确保所有延迟日志都被收集
                 CoroutineScope(Dispatchers.IO).launch {
-                    delay(100)
-                    
+                    delay(34)
+
                     // 收集日志
                     val allLogs = globalConsole.allLogs
                     if (allLogs.size > initialLogCount) {
