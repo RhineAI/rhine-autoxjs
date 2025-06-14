@@ -199,41 +199,41 @@ class CircularMenu(context: Context?) : Recorder.OnStateChangedListener, Capture
     @OptIn(DelicateCoroutinesApi::class)
     private fun selectWindow() {
         // 动态选项列表
-        val optionsList = mutableListOf<String?>("默认(default)")
+        val optionsList = mutableListOf<String?>("Default")
         windowSelectionList.clear()
         instance?.windows?.forEach {
             windowSelectionList.add(it)
             val str = StringBuilder()
             var isActiveOrFocused = false
             if (it.isActive) {
-                str.append(">active  ")
+                str.append("[Active] ")
                 isActiveOrFocused = true
             }
             if (it.isFocused) {
-                str.append("focused<")
+                str.append("[Focused] ")
                 isActiveOrFocused = true
             }
             if (isActiveOrFocused) {
                 str.append("\n")
             }
             if (it.title != null) {
-                str.append("title: ")
+                str.append("Title: ")
                 str.append(it.title)
                 str.append("\n")
             }
-            str.append("type: ")
+            str.append("Type: ")
             if (it.type == TYPE_APPLICATION) {
-                str.append("(应用)TYPE_APPLICATION")
+                str.append("TYPE_APPLICATION")
             } else if (it.type == TYPE_INPUT_METHOD) {
-                str.append("(输入法)TYPE_INPUT_METHOD")
+                str.append("TYPE_INPUT_METHOD")
             } else if (it.type == TYPE_SYSTEM) {
-                str.append("(系统)TYPE_SYSTEM")
+                str.append("TYPE_SYSTEM")
             } else if (it.type == TYPE_ACCESSIBILITY_OVERLAY) {
-                str.append("(无障碍)TYPE_ACCESSIBILITY_OVERLAY")
+                str.append("TYPE_ACCESSIBILITY_OVERLAY")
             } else if (it.type == TYPE_SPLIT_SCREEN_DIVIDER) {
-                str.append("(分屏)TYPE_SPLIT_SCREEN_DIVIDER")
+                str.append("TYPE_SPLIT_SCREEN_DIVIDER")
             } else if (it.type == TYPE_MAGNIFICATION_OVERLAY) {
-                str.append("(放大镜)TYPE_MAGNIFICATION_OVERLAY")
+                str.append("TYPE_MAGNIFICATION_OVERLAY")
             } else {
                 str.append(it.type)
             }
