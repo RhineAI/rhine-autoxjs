@@ -171,17 +171,13 @@ fun FloatingWindowContent(
     onClose: () -> Unit,
     onDrag: (deltaX: Float, deltaY: Float) -> Unit,
 ) {
-    var messages by remember { 
+    var messages by remember {
         mutableStateOf(listOf(
-            ChatMessage(2, "RHINE AI", "你好！我是 RHINE.AI 公司研发的 Android Intelligence。我可以帮你完成安卓系统上的操作！"),
-            ChatMessage(3, "小明", "请帮我写一个简单的自动化脚本"),
-            ChatMessage(4, "RHINE AI", "当然可以！请告诉我你想要实现什么功能，比如自动点击、文本输入还是其他操作？"),
-            ChatMessage(5, "小明", "看看我手机上所有银行卡软件的余额够不够清空我淘宝购物车？"),
-            ChatMessage(6, "RHINE AI", "好的！请稍等，正在执行...")
+            ChatMessage(1, "RHINE AI", "你好！我是 RHINE.AI 公司研发的 Android Intelligence。我可以帮你完成安卓系统上的操作！"),
         ))
     }
     var inputText by remember { mutableStateOf("") }
-    var messageIdCounter by remember { mutableStateOf(7) }
+    var messageIdCounter by remember { mutableStateOf(2) }
 
     Box(
         modifier = Modifier
@@ -244,7 +240,7 @@ fun FloatingWindowContent(
                             ChatMessageItem(message = message)
                         }
                     }
-                    
+
                     // 顶部白色渐变遮罩层
                     Box(
                         modifier = Modifier
@@ -261,7 +257,7 @@ fun FloatingWindowContent(
                                 )
                             )
                     )
-                    
+
                     // 底部白色渐变遮罩层
                     Box(
                         modifier = Modifier
@@ -306,6 +302,7 @@ fun FloatingWindowContent(
                                 fontSize = 14.sp,
                                 modifier = Modifier
                                     .fillMaxSize()
+                                    .padding(start = 1.dp)
                                     .wrapContentHeight(Alignment.CenterVertically)
                             )
                         }
@@ -357,7 +354,7 @@ fun ChatMessageItem(message: ChatMessage) {
             text = message.username,
             fontSize = 12.sp,
             color = Color.Gray,
-            modifier = Modifier.padding(bottom = 6.dp)
+            modifier = Modifier.padding(bottom = 8.dp)
         )
         
         // 消息气泡 - 所有消息都靠左
@@ -367,16 +364,13 @@ fun ChatMessageItem(message: ChatMessage) {
         ) {
             Box(
                 modifier = Modifier
-                    .background(
-                        color = Color.White,
-                        shape = RoundedCornerShape(12.dp)
-                    )
                     .padding(end = 8.dp)
             ) {
                 Text(
                     text = message.content,
                     fontSize = 14.sp,
-                    color = Color.Black
+                    color = Color.Black,
+                    lineHeight = 24.sp
                 )
             }
         }
