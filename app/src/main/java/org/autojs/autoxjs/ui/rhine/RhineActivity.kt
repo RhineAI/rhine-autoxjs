@@ -127,7 +127,7 @@ class RhineActivity: FragmentActivity() {
 
         var inputText by remember { mutableStateOf("") }
         
-        val buttonBackgroundColor = Color(0xFFDDDDDD)
+        val buttonBackgroundColor = Color(0xFFE8E8E8)
         val buttonTextColor = Color(0xFF111111)
 
         SetSystemUI(drawerState)
@@ -199,7 +199,7 @@ class RhineActivity: FragmentActivity() {
                         )
                     ) {
                         Text(
-                            text = "Send AA",
+                            text = "Start",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )
@@ -211,7 +211,8 @@ class RhineActivity: FragmentActivity() {
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(48.dp),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 20.dp)
                     ) {
                         Button(
@@ -223,7 +224,6 @@ class RhineActivity: FragmentActivity() {
                                 backgroundColor = buttonBackgroundColor,
                                 contentColor = buttonTextColor
                             ),
-                            contentPadding = PaddingValues(16.dp, 12.dp),
                             shape = RoundedCornerShape(50)
                         ) {
                             Text("Home")
@@ -235,7 +235,6 @@ class RhineActivity: FragmentActivity() {
                                 backgroundColor = buttonBackgroundColor,
                                 contentColor = buttonTextColor
                             ),
-                            contentPadding = PaddingValues(16.dp, 12.dp),
                             shape = RoundedCornerShape(50)
                         ) {
                             Text("MCP")
@@ -247,7 +246,17 @@ class RhineActivity: FragmentActivity() {
                                 backgroundColor = buttonBackgroundColor,
                                 contentColor = buttonTextColor
                             ),
-                            contentPadding = PaddingValues(16.dp, 12.dp),
+                            shape = RoundedCornerShape(50)
+                        ) {
+                            Text("Debug")
+                        }
+
+                        Button(
+                            onClick = {},
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = buttonBackgroundColor,
+                                contentColor = buttonTextColor
+                            ),
                             shape = RoundedCornerShape(50)
                         ) {
                             Text("Setting")
@@ -255,7 +264,7 @@ class RhineActivity: FragmentActivity() {
                     }
 
                     Text(
-                        modifier = Modifier.padding(8.dp),
+                        modifier = Modifier.padding(top = 8.dp),
                         text = "RHINE.AI",
                     )
                 }

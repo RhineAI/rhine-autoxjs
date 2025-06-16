@@ -11,15 +11,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -94,10 +98,7 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
             setContent {
                 AutoXJsTheme {
                     FloatingWindowContent(
-                        onActionClick = {
-                            // 处理动作点击
-                        },
-                        onCloseClick = {
+                        onClose = {
                             stopSelf()
                         },
                         onDrag = { deltaX, deltaY ->
@@ -153,27 +154,55 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
 
 @Composable
 fun FloatingWindowContent(
-    onActionClick: () -> Unit,
-    onCloseClick: () -> Unit,
+    onClose: () -> Unit,
     onDrag: (deltaX: Float, deltaY: Float) -> Unit,
 ) {
     Box(
         modifier = Modifier
             .wrapContentSize()
-            .width(336.dp)
-            .padding(20.dp)
-            .background(
-                color = Color(0xFF1E1E1E), // 深灰色背景
-                shape = RoundedCornerShape(16.dp)
-            )
-            .padding(24.dp), // 内边距
-        contentAlignment = Alignment.Center
+            .padding(16.dp) // 为阴影留出空间
     ) {
-        Text(
-            text = "RHINE AI",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+        Box(
+            modifier = Modifier
+                .width(300.dp)
+                .height(450.dp)
+                .shadow(
+                    elevation = 12.dp,
+                    shape = RoundedCornerShape(32.dp)
+                )
+                .background(
+                    color = Color(0xFFFFFFFF),
+                    shape = RoundedCornerShape(32.dp)
+                )
+                .padding(20.dp)
+                .pointerInput(Unit) {
+                    detectDragGestures { _, dragAmount ->
+                        onDrag(dragAmount.x, dragAmount.y)
+                    }
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "RHINE AI",
+                color = Color.Black,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FloatingWindowContentPreview() {
+    Box(
+        modifier = Modifier
+            .background(Color.White)
+            .padding(30.dp, 50.dp)
+    ) {
+        FloatingWindowContent(
+            onClose = { },
+            onDrag = { _, _ -> }
         )
     }
 }
