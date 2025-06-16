@@ -180,7 +180,6 @@ android {
 }
 
 dependencies {
-
     val AAVersion = "4.5.2"
 
     // Added by ozobi - 2025/03/03

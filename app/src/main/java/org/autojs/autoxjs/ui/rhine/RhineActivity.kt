@@ -1,8 +1,6 @@
 package org.autojs.autoxjs.ui.rhine
 
 import DebugServer
-import android.Manifest
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -20,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,22 +33,17 @@ import com.stardust.app.permission.DrawOverlaysPermission
 import com.stardust.autojs.core.permission.StoragePermissionUtils
 import com.stardust.autojs.core.permission.StoragePermissionUtils.getMediaPermissionList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.autojs.autoxjs.Pref
 import org.autojs.autoxjs.R
 import org.autojs.autoxjs.external.foreground.ForegroundService
 import org.autojs.autoxjs.network.MessengerServiceConnection
 import org.autojs.autoxjs.timing.TimedTaskScheduler
-import org.autojs.autoxjs.ui.compose.theme.AutoXJsTheme
 import org.autojs.autoxjs.ui.floating.FloatyWindowManger
 import org.autojs.autoxjs.ui.main.MainActivity
-import org.autojs.autoxjs.ui.main.scripts.ScriptListFragment
-import org.autojs.autoxjs.ui.main.task.TaskManagerFragmentKt
-import org.autojs.autoxjs.ui.main.web.EditorAppManager
-import org.autojs.autoxjs.ui.rhine.panel.FloatyPanelService
+import org.autojs.autoxjs.ui.rhine.panel.FloatingPanelService
 
 
-class RhineActivity : FragmentActivity() {
+class RhineActivity: FragmentActivity() {
 
     companion object {
         @JvmStatic
@@ -190,7 +182,7 @@ class RhineActivity : FragmentActivity() {
                             if (inputText.isNotBlank()) {
                                 Log.i(TAG, "Input text: $inputText")
                             }
-                            val floatingIntent = Intent(this@RhineActivity, FloatyPanelService::class.java)
+                            val floatingIntent = Intent(this@RhineActivity, FloatingPanelService::class.java)
                             startService(floatingIntent)
                         },
                         modifier = Modifier
@@ -207,7 +199,7 @@ class RhineActivity : FragmentActivity() {
                         )
                     ) {
                         Text(
-                            text = "Send A",
+                            text = "Send AA",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )

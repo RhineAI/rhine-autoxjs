@@ -433,7 +433,7 @@
             android:exported="true"
             android:launchMode="singleTask"/>
         <service
-            android:name="org.autojs.autoxjs.ui.rhine.panel.FloatyPanelService"
+            android:name="org.autojs.autoxjs.ui.rhine.panel.FloatingPanelService"
             android:enabled="true"
             android:exported="false" />
         <activity
