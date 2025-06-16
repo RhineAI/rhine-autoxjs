@@ -432,6 +432,10 @@
             android:name="org.autojs.autoxjs.ui.rhine.RhineActivity"
             android:exported="true"
             android:launchMode="singleTask"/>
+        <service
+            android:name="org.autojs.autoxjs.ui.rhine.panel.FloatyPanelService"
+            android:enabled="true"
+            android:exported="false" />
         <activity
             android:name="org.autojs.autoxjs.ui.main.MainActivity"
             android:exported="true"

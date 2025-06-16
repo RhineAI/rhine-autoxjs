@@ -48,6 +48,7 @@ import org.autojs.autoxjs.ui.main.MainActivity
 import org.autojs.autoxjs.ui.main.scripts.ScriptListFragment
 import org.autojs.autoxjs.ui.main.task.TaskManagerFragmentKt
 import org.autojs.autoxjs.ui.main.web.EditorAppManager
+import org.autojs.autoxjs.ui.rhine.panel.FloatyPanelService
 
 
 class RhineActivity : FragmentActivity() {
@@ -187,23 +188,26 @@ class RhineActivity : FragmentActivity() {
                     Button(
                         onClick = {
                             if (inputText.isNotBlank()) {
-                                println("Input text: $inputText")
+                                Log.i(TAG, "Input text: $inputText")
                             }
+                            val floatingIntent = Intent(this@RhineActivity, FloatyPanelService::class.java)
+                            startService(floatingIntent)
                         },
                         modifier = Modifier
                             .absoluteOffset(x = (-12).dp, y = (-12).dp)
                             .align(Alignment.BottomEnd),
                         shape = RoundedCornerShape(12.dp),
-                        enabled = inputText.isNotBlank(),
+//                        enabled = inputText.isNotBlank(),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = if (inputText.isNotBlank()) Color.Black else Color.Gray,
+//                            backgroundColor = if (inputText.isNotBlank()) Color.Black else Color.Gray,
+                            backgroundColor = Color.Black,
                             contentColor = Color.White,
                             disabledBackgroundColor = Color.Gray,
                             disabledContentColor = Color.White
                         )
                     ) {
                         Text(
-                            text = "Send",
+                            text = "Send A",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium
                         )
