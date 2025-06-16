@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -171,12 +173,11 @@ fun FloatingWindowContent(
 ) {
     var messages by remember { 
         mutableStateOf(listOf(
-            ChatMessage(1, "小明", "你好，RHINE AI！"),
-            ChatMessage(2, "RHINE AI", "你好！我是RHINE AI助手，有什么可以帮你的吗？"),
+            ChatMessage(2, "RHINE AI", "你好！我是 RHINE.AI 公司研发的 Android Intelligence。我可以帮你完成安卓系统上的操作！"),
             ChatMessage(3, "小明", "请帮我写一个简单的自动化脚本"),
             ChatMessage(4, "RHINE AI", "当然可以！请告诉我你想要实现什么功能，比如自动点击、文本输入还是其他操作？"),
-            ChatMessage(5, "小红", "我也想学习AutoJS"),
-            ChatMessage(6, "RHINE AI", "欢迎加入！AutoJS是一个很强大的自动化工具，可以帮助你实现很多有趣的功能。")
+            ChatMessage(5, "小明", "看看我手机上所有银行卡软件的余额够不够清空我淘宝购物车？"),
+            ChatMessage(6, "RHINE AI", "好的！请稍等，正在执行...")
         ))
     }
     var inputText by remember { mutableStateOf("") }
@@ -185,19 +186,19 @@ fun FloatingWindowContent(
     Box(
         modifier = Modifier
             .wrapContentSize()
-            .padding(16.dp) // 为阴影留出空间
+            .padding(18.dp)
     ) {
         Box(
             modifier = Modifier
                 .width(320.dp)
                 .height(500.dp)
                 .shadow(
-                    elevation = 12.dp,
-                    shape = RoundedCornerShape(36.dp)
+                    elevation = 9.dp,
+                    shape = RoundedCornerShape(32.dp)
                 )
                 .background(
                     color = Color.White,
-                    shape = RoundedCornerShape(36.dp)
+                    shape = RoundedCornerShape(32.dp)
                 )
                 .pointerInput(Unit) {
                     detectDragGestures { _, dragAmount ->
@@ -214,9 +215,9 @@ fun FloatingWindowContent(
                         .fillMaxWidth()
                         .background(
                             color = Color.White,
-                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
                         )
-                        .padding(16.dp)
+                        .padding(top = 16.dp, bottom = 4.dp)
                 ) {
                     Text(
                         text = "RHINE AI",
@@ -237,18 +238,35 @@ fun FloatingWindowContent(
                             .fillMaxSize()
                             .padding(horizontal = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(bottom = 40.dp) // 为渐变遮罩留出空间
+                        contentPadding = PaddingValues(top = 20.dp, bottom = 20.dp) // 为上下渐变遮罩留出空间
                     ) {
                         items(messages) { message ->
                             ChatMessageItem(message = message)
                         }
                     }
                     
-                    // 白色渐变遮罩层
+                    // 顶部白色渐变遮罩层
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(40.dp)
+                            .height(28.dp)
+                            .align(Alignment.TopCenter)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White,
+                                        Color.White.copy(alpha = 0.8f),
+                                        Color.White.copy(alpha = 0f)
+                                    )
+                                )
+                            )
+                    )
+                    
+                    // 底部白色渐变遮罩层
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(28.dp)
                             .align(Alignment.BottomCenter)
                             .background(
                                 brush = Brush.verticalGradient(
@@ -266,29 +284,46 @@ fun FloatingWindowContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(56.dp)
                         .background(Color.White)
-                        .padding(8.dp),
+                        .padding(start = 8.dp, bottom = 8.dp, end = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TextField(
-                        value = inputText,
-                        onValueChange = { inputText = it },
+                    Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(48.dp),
-                        placeholder = { Text("Input Something...") },
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color(0xFFF5F5F5),
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(30.dp),
-                        singleLine = true
-                    )
-                    
-                    Spacer(modifier = Modifier.width(8.dp))
+                            .height(48.dp)
+                            .background(
+                                color = Color(0xFFF2F2F2),
+                                shape = RoundedCornerShape(24.dp)
+                            )
+                            .padding(16.dp, 12.dp),
+                    ) {
+                        if (inputText.isEmpty()) {
+                            Text(
+                                text = "Input Something...",
+                                color = Color.Gray,
+                                fontSize = 14.sp,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentHeight(Alignment.CenterVertically)
+                            )
+                        }
+
+                        BasicTextField(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentHeight(Alignment.CenterVertically),
+                            textStyle = TextStyle(fontSize = 14.sp),
+                            value = inputText,
+                            onValueChange = { inputText = it },
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(4.dp))
                     
                     IconButton(
+                        modifier = Modifier.size(48.dp),
                         onClick = {
                             if (inputText.isNotBlank()) {
                                 messages = messages + ChatMessage(
@@ -336,7 +371,7 @@ fun ChatMessageItem(message: ChatMessage) {
                         color = Color.White,
                         shape = RoundedCornerShape(12.dp)
                     )
-                    .widthIn(max = 220.dp)
+                    .padding(end = 8.dp)
             ) {
                 Text(
                     text = message.content,
