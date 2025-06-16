@@ -13,12 +13,17 @@ import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
@@ -39,6 +44,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import org.autojs.autoxjs.ui.compose.theme.AutoXJsTheme
 import org.autojs.autoxjs.ui.floating.MyLifecycleOwner
+
+data class ChatMessage(
+    val id: Int,
+    val username: String,
+    val content: String,
+    val timestamp: Long = System.currentTimeMillis()
+)
 
 class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOwner, LifecycleOwner {
 
@@ -157,6 +169,19 @@ fun FloatingWindowContent(
     onClose: () -> Unit,
     onDrag: (deltaX: Float, deltaY: Float) -> Unit,
 ) {
+    var messages by remember { 
+        mutableStateOf(listOf(
+            ChatMessage(1, "小明", "你好，RHINE AI！"),
+            ChatMessage(2, "RHINE AI", "你好！我是RHINE AI助手，有什么可以帮你的吗？"),
+            ChatMessage(3, "小明", "请帮我写一个简单的自动化脚本"),
+            ChatMessage(4, "RHINE AI", "当然可以！请告诉我你想要实现什么功能，比如自动点击、文本输入还是其他操作？"),
+            ChatMessage(5, "小红", "我也想学习AutoJS"),
+            ChatMessage(6, "RHINE AI", "欢迎加入！AutoJS是一个很强大的自动化工具，可以帮助你实现很多有趣的功能。")
+        ))
+    }
+    var inputText by remember { mutableStateOf("") }
+    var messageIdCounter by remember { mutableStateOf(7) }
+
     Box(
         modifier = Modifier
             .wrapContentSize()
@@ -164,30 +189,161 @@ fun FloatingWindowContent(
     ) {
         Box(
             modifier = Modifier
-                .width(300.dp)
-                .height(450.dp)
+                .width(320.dp)
+                .height(500.dp)
                 .shadow(
                     elevation = 12.dp,
-                    shape = RoundedCornerShape(32.dp)
+                    shape = RoundedCornerShape(36.dp)
                 )
                 .background(
-                    color = Color(0xFFFFFFFF),
-                    shape = RoundedCornerShape(32.dp)
+                    color = Color.White,
+                    shape = RoundedCornerShape(36.dp)
                 )
-                .padding(20.dp)
                 .pointerInput(Unit) {
                     detectDragGestures { _, dragAmount ->
                         onDrag(dragAmount.x, dragAmount.y)
                     }
-                },
-            contentAlignment = Alignment.Center
+                }
         ) {
-            Text(
-                text = "RHINE AI",
-                color = Color.Black,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // 聊天标题栏
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = Color.White,
+                            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "RHINE AI",
+                        color = Color.Black,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+
+                // 消息列表容器
+                Box(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    // 消息列表
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(bottom = 40.dp) // 为渐变遮罩留出空间
+                    ) {
+                        items(messages) { message ->
+                            ChatMessageItem(message = message)
+                        }
+                    }
+                    
+                    // 白色渐变遮罩层
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(40.dp)
+                            .align(Alignment.BottomCenter)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0f),
+                                        Color.White.copy(alpha = 0.8f),
+                                        Color.White
+                                    )
+                                )
+                            )
+                    )
+                }
+
+                // 输入框和发送按钮
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextField(
+                        value = inputText,
+                        onValueChange = { inputText = it },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        placeholder = { Text("Input Something...") },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color(0xFFF5F5F5),
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        shape = RoundedCornerShape(30.dp),
+                        singleLine = true
+                    )
+                    
+                    Spacer(modifier = Modifier.width(8.dp))
+                    
+                    IconButton(
+                        onClick = {
+                            if (inputText.isNotBlank()) {
+                                messages = messages + ChatMessage(
+                                    id = messageIdCounter++,
+                                    username = "用户", 
+                                    content = inputText
+                                )
+                                inputText = ""
+                            }
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Send,
+                            contentDescription = "发送",
+                            tint = Color.Gray
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ChatMessageItem(message: ChatMessage) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
+    ) {
+        // 用户名
+        Text(
+            text = message.username,
+            fontSize = 12.sp,
+            color = Color.Gray,
+            modifier = Modifier.padding(bottom = 6.dp)
+        )
+        
+        // 消息气泡 - 所有消息都靠左
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .widthIn(max = 220.dp)
+            ) {
+                Text(
+                    text = message.content,
+                    fontSize = 14.sp,
+                    color = Color.Black
+                )
+            }
         }
     }
 }
