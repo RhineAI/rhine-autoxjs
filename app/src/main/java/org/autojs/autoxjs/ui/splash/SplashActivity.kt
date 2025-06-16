@@ -44,7 +44,7 @@ import org.autojs.autoxjs.ui.rhine.RhineActivity
 /**
  * Created by Stardust on 2017/7/7.
  */
-class SplashActivity : ComponentActivity() {
+class SplashActivity: ComponentActivity() {
     private var mAlreadyEnterNextActivity = false
     private var mPaused = false
     override fun onCreate(savedInstanceState: Bundle?) {

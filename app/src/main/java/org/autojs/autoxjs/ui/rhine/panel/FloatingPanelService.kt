@@ -10,6 +10,9 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+import android.view.WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+import android.util.TypedValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -58,6 +61,19 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
 
     private lateinit var windowManager: WindowManager
     private var floatingView: View? = null
+    
+    // 窗口大小配置 (dp)
+    private var windowWidthDp = 350
+    private var windowHeightDp = 440
+    private var isResizable = true
+    
+    private fun dpToPx(dp: Int): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            resources.displayMetrics
+        ).toInt()
+    }
 
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
     private val lifecycleRegistry = LifecycleRegistry(this)
@@ -93,16 +109,18 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
 
     private fun createFloatingWindow() {
         val params = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
+            if (isResizable) dpToPx(windowWidthDp) else WindowManager.LayoutParams.WRAP_CONTENT,
+            if (isResizable) dpToPx(windowHeightDp) else WindowManager.LayoutParams.WRAP_CONTENT,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             } else {
                 WindowManager.LayoutParams.TYPE_PHONE
             },
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            FLAG_NOT_TOUCH_MODAL or FLAG_WATCH_OUTSIDE_TOUCH,
             PixelFormat.TRANSLUCENT
         )
+
+        params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 
         params.gravity = Gravity.TOP or Gravity.START
         params.x = 100
@@ -112,6 +130,8 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
             setContent {
                 AutoXJsTheme {
                     FloatingWindowContent(
+                        windowWidth = windowWidthDp,
+                        windowHeight = windowHeightDp,
                         onClose = {
                             stopSelf()
                         },
@@ -119,6 +139,15 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
                             params.x += deltaX.toInt()
                             params.y += deltaY.toInt()
                             windowManager.updateViewLayout(floatingView, params)
+                        },
+                        onResize = { newWidth, newHeight ->
+                            if (isResizable) {
+                                windowWidthDp = newWidth
+                                windowHeightDp = newHeight
+                                params.width = dpToPx(newWidth)
+                                params.height = dpToPx(newHeight)
+                                windowManager.updateViewLayout(floatingView, params)
+                            }
                         }
                     )
                 }
@@ -151,6 +180,28 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
         }
     }
 
+    // 公开方法用于设置窗口大小 (dp)
+    fun setWindowSize(widthDp: Int, heightDp: Int) {
+        if (isResizable) {
+            windowWidthDp = widthDp
+            windowHeightDp = heightDp
+            floatingView?.let {
+                val params = it.layoutParams as WindowManager.LayoutParams
+                params.width = dpToPx(widthDp)
+                params.height = dpToPx(heightDp)
+                windowManager.updateViewLayout(it, params)
+            }
+        }
+    }
+    
+    fun getWindowSize(): Pair<Int, Int> {
+        return Pair(windowWidthDp, windowHeightDp)
+    }
+    
+    fun setResizable(resizable: Boolean) {
+        isResizable = resizable
+    }
+
     override fun onDestroy() {
         lifecycleRegistry.currentState = Lifecycle.State.DESTROYED
         super.onDestroy()
@@ -168,8 +219,11 @@ class FloatingPanelService: Service(), ViewModelStoreOwner, SavedStateRegistryOw
 
 @Composable
 fun FloatingWindowContent(
+    windowWidth: Int = 320,
+    windowHeight: Int = 440,
     onClose: () -> Unit,
     onDrag: (deltaX: Float, deltaY: Float) -> Unit,
+    onResize: (newWidth: Int, newHeight: Int) -> Unit = { _, _ -> },
 ) {
     var messages by remember {
         mutableStateOf(listOf(
@@ -186,8 +240,8 @@ fun FloatingWindowContent(
     ) {
         Box(
             modifier = Modifier
-                .width(320.dp)
-                .height(500.dp)
+                .width(windowWidth.dp)
+                .height(windowHeight.dp)
                 .shadow(
                     elevation = 9.dp,
                     shape = RoundedCornerShape(32.dp)
@@ -325,7 +379,7 @@ fun FloatingWindowContent(
                             if (inputText.isNotBlank()) {
                                 messages = messages + ChatMessage(
                                     id = messageIdCounter++,
-                                    username = "用户", 
+                                    username = "You",
                                     content = inputText
                                 )
                                 inputText = ""
@@ -364,7 +418,7 @@ fun ChatMessageItem(message: ChatMessage) {
         ) {
             Box(
                 modifier = Modifier
-                    .padding(end = 8.dp)
+                    .padding(end = 2.dp)
             ) {
                 Text(
                     text = message.content,
@@ -386,8 +440,11 @@ fun FloatingWindowContentPreview() {
             .padding(30.dp, 50.dp)
     ) {
         FloatingWindowContent(
+            windowWidth = 320,
+            windowHeight = 440,
             onClose = { },
-            onDrag = { _, _ -> }
+            onDrag = { _, _ -> },
+            onResize = { _, _ -> }
         )
     }
 }
