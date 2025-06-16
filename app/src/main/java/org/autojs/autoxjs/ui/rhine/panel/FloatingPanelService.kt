@@ -354,7 +354,7 @@ fun ChatMessageItem(message: ChatMessage) {
             text = message.username,
             fontSize = 12.sp,
             color = Color.Gray,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
         
         // 消息气泡 - 所有消息都靠左
@@ -368,9 +368,9 @@ fun ChatMessageItem(message: ChatMessage) {
             ) {
                 Text(
                     text = message.content,
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     color = Color.Black,
-                    lineHeight = 24.sp
+                    lineHeight = 24.sp,
                 )
             }
         }
